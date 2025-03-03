@@ -1,0 +1,19 @@
+# Python
+*.pyc
+__pycache__/
+.venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
