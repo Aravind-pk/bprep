@@ -3,14 +3,16 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from agno.agent import Agent, RunResponse
 from agno.models.openrouter.openrouter import OpenRouter
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
 # Define the MCQ model for a single question
 class MCQ(BaseModel):
-    question_text: str = Field(..., description="The question to be asked")
-    options: List[str] = Field(..., description="List of options (excluding the correct answer)")
-    answer: str = Field(..., description="The correct answer from the options")
+    question: str = Field(..., description="The question to be asked")
+    options: List[str] = Field(..., description="List of options (including the correct answer)")
+    correctAnswer:str = Field(..., description="Index of the correct option")
     explanation: str = Field(..., description="accurate short explanation")
 
 
@@ -30,13 +32,24 @@ json_mode_agent = Agent(
     response_model=MCQList,
 )
 
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/mcq", response_model=MCQList)
 def generate_mcq(request: MCQRequest):
     """
     Endpoint to generate a list of MCQs based on a provided topic and number of questions.
     """
     prompt = (
-        "Generate {request.num_questions} questions on the topic: {request.topic}."
+        f"Generate {request.num_questions} questions on the topic: {request.topic}. "
     )
     response: RunResponse = json_mode_agent.run(prompt)
     return response.content
