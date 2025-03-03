@@ -23,12 +23,11 @@ class MCQList(BaseModel):
 # Define the request model for the POST endpoint
 class MCQRequest(BaseModel):
     topic: str = Field(..., description="Topic or context for generating MCQs")
-    num_questions: int = Field(10, description="Number of questions to generate")
 
 # Configure the agent with the appropriate model and description
 json_mode_agent = Agent(
     model=OpenRouter(id="google/gemini-2.0-flash-lite-preview-02-05:free"),
-    description="You are an MCQ generator that industry standard questions based on a given topic to help students practice for job exams.",
+    description="You are an MCQ generator that makes 5 industry standard questions based on a given topic to help students practice for job exams.",
     response_model=MCQList,
 )
 
@@ -48,10 +47,8 @@ def generate_mcq(request: MCQRequest):
     """
     Endpoint to generate a list of MCQs based on a provided topic and number of questions.
     """
-    prompt = (
-        f"Generate {request.num_questions} questions on the topic: {request.topic}. "
-    )
-    response: RunResponse = json_mode_agent.run(prompt)
+    response: RunResponse = json_mode_agent.run(request.topic)
+
     return response.content
 
 if __name__ == "__main__":
