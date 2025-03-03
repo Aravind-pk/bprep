@@ -9,27 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Clock, CheckCircle2, BookOpen, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
-import useAssessmentStore from "@/store/userStore"
 import { useAssessment } from "@/query/questions"
-
-// Extracted feature card component for cleaner code
-const FeatureCard = ({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ElementType
-  title: string
-  description: string
-}) => (
-  <Card className="p-6 border border-border/40 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
-    <CardContent className="p-0 space-y-2">
-      <Icon className="h-10 w-10 text-primary mb-2" />
-      <h3 className="text-xl font-medium">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </CardContent>
-  </Card>
-)
+import { useAssessmentStore } from "@/store/assesment"
 
 // Extracted suggestion button component
 const SuggestionButton = ({
@@ -50,27 +31,23 @@ const SuggestionButton = ({
   </Button>
 )
 
-export default function LandingPage() {
+export default function HomePage() {
   const [prompt, setPrompt] = useState("")
   const {setTopic} = useAssessmentStore()
-  const { getMCQS} = useAssessment()
   const router = useRouter()
 
   const suggestions = [
-    { id: 1, title: "System Design Interview", prompt: "I have a system design interview" },
-    { id: 2, title: "JavaScript Fundamentals", prompt: "JavaScript interview questions" },
-    { id: 3, title: "First Date", prompt: "I have a first date today" },
-    { id: 4, title: "World ending", prompt: "I want to prepare for world ending" },
-    { id: 6, title: "SQL Database", prompt: "SQL interview questions" },
+    {title: "System Design Interview", prompt: "I have a system design interview" },
+    {title: "World Domination", prompt: "I want to prepare for WORLD DOMINATION" },
+    {title: "JavaScript Fundamentals", prompt: "JavaScript interview questions" },
+    {title: "First Date", prompt: "I have a first date today" },
+    {title: "SQL Database", prompt: "SQL interview questions" },
   ]
 
   const handleStart = () => {
     setTopic(prompt)
     router.push('/assessment')
-    getMCQS.mutateAsync({
-      topic:prompt
-    })
-    
+
   }
 
   return (
@@ -85,7 +62,7 @@ export default function LandingPage() {
           bprep
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Prepare for anything
+          Prepare for anything with AI 🌠
         </p>
       </motion.div>
 
@@ -115,11 +92,11 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-muted-foreground">SUGGESTED TOPICS</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">Top preps</h3>
             <div className="flex flex-wrap gap-2">
-              {suggestions.map((suggestion) => (
+              {suggestions.map((suggestion, index) => (
                 <SuggestionButton
-                  key={suggestion.id}
+                  key={index}
                   title={suggestion.title}
                   prompt={suggestion.prompt}
                   onClick={setPrompt}
@@ -134,7 +111,7 @@ export default function LandingPage() {
             disabled={!prompt.trim()}
             onClick={handleStart}
           >
-            Start Assessment
+            Start 🏃‍♂️‍➡️
             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

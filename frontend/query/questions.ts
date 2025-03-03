@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query"
 let fetcher = dataProvider("userInstance")
 
 const getMCQQuestions = async (data : {topic: string}) => {
-  const response = fetcher.post(`mixpanel/track`, data)
+  const response = fetcher.post(`mcq`, data)
   return response
 }
 
