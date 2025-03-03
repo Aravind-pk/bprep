@@ -5,24 +5,20 @@ import { useMutation } from "@tanstack/react-query"
 
 let fetcher = dataProvider("userInstance")
 
-const startMySession = () => {
-  return fetcher.get("/journey/startSession")
+const getMCQQuestions = async (data : {topic: string}) => {
+  const response = fetcher.post(`mixpanel/track`, data)
+  return response
 }
 
+export const useAssessment = () => {
+  const getKey = () => ["get-mcqs"]
 
-export const useStartSession = () => {
-  const getKey = () => ["start-session"]
-
-  const startSession = useMutation({
+  const getMCQS = useMutation({
     mutationKey: getKey(),
-    mutationFn: () => startMySession(),
-    onSuccess: (data) => {
-      console.log("Session started successfully")
-    },
-    onError: (error) => {
-      console.error("Failed to start session:", error)
-    },
+    mutationFn:  async (data: { topic: string }) => getMCQQuestions(data),
   })
 
-  return { startSession }
+  return { getMCQS }
 }
+
+

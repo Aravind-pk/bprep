@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Clock, CheckCircle2, BookOpen, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import useAssessmentStore from "@/store/userStore"
+import { useAssessment } from "@/query/questions"
 
 // Extracted feature card component for cleaner code
 const FeatureCard = ({
@@ -50,6 +52,8 @@ const SuggestionButton = ({
 
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("")
+  const {setTopic} = useAssessmentStore()
+  const { getMCQS} = useAssessment()
   const router = useRouter()
 
   const suggestions = [
@@ -60,31 +64,13 @@ export default function LandingPage() {
     { id: 6, title: "SQL Database", prompt: "SQL interview questions" },
   ]
 
-  const features = [
-    {
-      icon: Clock,
-      title: "Timed Practice",
-      description: "Simulate real interview conditions with timed questions to improve your performance under pressure",
-    },
-    {
-      icon: BookOpen,
-      title: "Custom Topics",
-      description: "Practice questions specific to your interview needs, from technical skills to behavioral scenarios",
-    },
-    {
-      icon: CheckCircle2,
-      title: "Instant Feedback",
-      description: "Review your performance with detailed explanations and track your progress over time",
-    },
-  ]
-
   const handleStart = () => {
-
+    setTopic(prompt)
     router.push('/assessment')
-
+    getMCQS.mutateAsync({
+      topic:prompt
+    })
     
-
-  
   }
 
   return (

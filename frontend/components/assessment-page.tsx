@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Clock, BarChart, ArrowLeft, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
+import useAssessmentStore from "@/store/userStore"
+import { useAssessment } from "@/query/questions"
 
 export function AssessmentPage() {
   const router = useRouter()
@@ -19,33 +21,19 @@ export function AssessmentPage() {
   const [answers, setAnswers] = useState<(number | null)[]>([])
   const [timer, setTimer] = useState(30) // 30 seconds per question
   const [completed, setCompleted] = useState(false)
+  const {topic} = useAssessmentStore()
+  const {getMCQS} = useAssessment()
 
   // Ref to fix the dependency issue in the interval useEffect
   const handleNextQuestionRef = useRef(() => {})
 
-  // Fetch questions from API on mount
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/mcq", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ topic: "Data Structures", no_of_questions: 5 }),
-        })
-        if (!response.ok) {
-          throw new Error("Network response was not ok")
-        }
-        const data = await response.json()
-        setQuestions(data.questions)
-        setAnswers(Array(data.length).fill(null))
-      } catch (error) {
-        console.error("Error fetching questions:", error)
-      }
+  useEffect(() =>{
+
+    if(getMCQS.isSuccess){
+      setQuestions(getMCQS.data.data.questions)
     }
-    fetchQuestions()
-  }, [])
+
+  }, [getMCQS.isLoading])
 
   // Update handleNextQuestionRef to save answer and move to next question
   useEffect(() => {
